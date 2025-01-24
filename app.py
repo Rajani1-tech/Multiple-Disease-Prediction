@@ -54,13 +54,13 @@ if selected == 'Diabetes Prediction':
 
 
     if which_classifier == 'SVM':
-        test_accuracy = 0.79
+        test_accuracy = 0.7727271
         diabetes_model = pickle.load(open('saved_models/diabetes_model_svm.sav', 'rb'))
     elif which_classifier == 'DecisionTree':
-        test_accuracy = 0.73
+        test_accuracy = 0.694805
         diabetes_model = pickle.load(open('saved_models/diabetes_model_decision_tree.sav', 'rb'))
     elif which_classifier == 'LogisticRegression':
-        test_accuracy = 0.79
+        test_accuracy = 0.753246
         diabetes_model = pickle.load(open('saved_models/diabetes_model_logistic_regression.sav', 'rb'))
     else:
         st.error('Invalid classifier')
