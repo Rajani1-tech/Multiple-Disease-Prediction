@@ -130,7 +130,21 @@ if show_performance:
 
     # Classification Report
     st.write("🔹 **Classification Report:**")
-    st.text(classification_report(y_test, y_pred))
+
+    #   Convert the classification report into a DataFrame
+    report_dict = classification_report(y_test, y_pred, output_dict=True)
+
+   # Extract relevant data
+    report_df = pd.DataFrame(report_dict).transpose()
+    report_df = report_df.rename(index={'0': 'No Disease (0)', '1': 'Disease (1)'})
+
+   # Round values for better readability
+    report_df = report_df[['precision', 'recall', 'f1-score', 'support']].round(2)
+
+   # Display as a Streamlit table
+    st.dataframe(report_df)
+
+
 
     # Confusion Matrix
     st.write("🔹 **Confusion Matrix:**")
