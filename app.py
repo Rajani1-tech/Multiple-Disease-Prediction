@@ -3,28 +3,24 @@ import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
 
-
 # Set page configuration
-st.set_page_config(page_title="Health Assistant",
-                   layout="wide",
-                   page_icon="🧑‍⚕️")
+st.set_page_config(page_title="Health Assistant", layout="wide", page_icon="🧑‍⚕️")
 
-    
-# getting the working directory of the main.py
+# Getting the working directory of the main.py
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Load the trained model
 heart_disease_model = pickle.load(open(f'{working_dir}/saved_models/heart_disease_model.sav', 'rb'))
-# sidebar for navigation
+
+# Sidebar for navigation
 with st.sidebar:
     selected = option_menu('Multiple Disease Prediction System',
-
                            ['Diabetes Prediction',
                             'Heart Disease Prediction',
                             'Parkinsons Prediction'],
                            menu_icon='hospital-fill',
                            icons=['activity', 'heart', 'person'],
                            default_index=0)
-
 
 # Page Title
 st.title('Heart Disease Prediction using ML')
@@ -35,6 +31,8 @@ col1, col2, col3 = st.columns(3)
 # Input Fields with Validation
 with col1:
     age = st.number_input('Age', min_value=1, max_value=120, step=1)
+    if age is None:
+        st.error("Age is required.")
 
 with col2:
     sex = st.selectbox('Sex', ['Male', 'Female'])
@@ -84,7 +82,12 @@ with col1:
 heart_diagnosis = ''
 if st.button('Heart Disease Test Result'):
     user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
-    heart_prediction = heart_disease_model.predict([user_input])
-    heart_diagnosis = 'The person has heart disease' if heart_prediction[0] == 1 else 'The person does not have heart disease'
-
-st.success(heart_diagnosis)
+    
+    # Check if all values are provided
+    if None in user_input:
+        st.error("All input values must be provided to make a prediction.")
+    else:
+        # Perform prediction
+        heart_prediction = heart_disease_model.predict([user_input])
+        heart_diagnosis = 'The person has heart disease' if heart_prediction[0] == 1 else 'The person does not have heart disease'
+        st.success(heart_diagnosis)
