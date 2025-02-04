@@ -100,6 +100,8 @@ with col1:
 
 # Prediction Button
 heart_diagnosis = ''
+show_performance = False
+
 if st.button('Heart Disease Test Result'):
     user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
     
@@ -111,40 +113,44 @@ if st.button('Heart Disease Test Result'):
         heart_prediction = heart_disease_model.predict([user_input])
         heart_diagnosis = 'The person has heart disease' if heart_prediction[0] == 1 else 'The person does not have heart disease'
         st.success(heart_diagnosis)
+        
+        # Show model performance only after clicking the button
+        show_performance = True
 
 # ----- Model Performance Visualization -----
-st.subheader("📊 Model Performance on Test Data")
+if show_performance:
+    st.subheader("📊 Model Performance on Test Data")
 
-# Predictions on test data
-y_pred = heart_disease_model.predict(X_test)
+    # Predictions on test data
+    y_pred = heart_disease_model.predict(X_test)
 
-# Accuracy Score
-accuracy = accuracy_score(y_test, y_pred)
-st.write(f"**✅ Model Accuracy:** {accuracy:.2f}")
+    # Accuracy Score
+    accuracy = accuracy_score(y_test, y_pred)
+    st.write(f"**✅ Model Accuracy:** {accuracy:.2f}")
 
-# Classification Report
-st.write("🔹 **Classification Report:**")
-st.text(classification_report(y_test, y_pred))
+    # Classification Report
+    st.write("🔹 **Classification Report:**")
+    st.text(classification_report(y_test, y_pred))
 
-# Confusion Matrix
-st.write("🔹 **Confusion Matrix:**")
-conf_matrix = confusion_matrix(y_test, y_pred)
+    # Confusion Matrix
+    st.write("🔹 **Confusion Matrix:**")
+    conf_matrix = confusion_matrix(y_test, y_pred)
 
-# Plot Confusion Matrix
-fig, ax = plt.subplots(figsize=(5, 3))
-sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=['No Disease', 'Disease'], yticklabels=['No Disease', 'Disease'])
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-st.pyplot(fig)
-
-# Feature Importance (if using tree-based models)
-if hasattr(heart_disease_model, "feature_importances_"):
-    st.write("🔹 **Feature Importance:**")
-    feature_importance = pd.DataFrame({'Feature': X.columns, 'Importance': heart_disease_model.feature_importances_})
-    feature_importance = feature_importance.sort_values(by='Importance', ascending=False)
-
-    fig, ax = plt.subplots(figsize=(6, 4))
-    sns.barplot(x="Importance", y="Feature", data=feature_importance, palette="viridis")
-    plt.xlabel("Importance Score")
-    plt.ylabel("Feature")
+    # Plot Confusion Matrix
+    fig, ax = plt.subplots(figsize=(5, 3))
+    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=['No Disease', 'Disease'], yticklabels=['No Disease', 'Disease'])
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
     st.pyplot(fig)
+
+    # Feature Importance (if using tree-based models)
+    if hasattr(heart_disease_model, "feature_importances_"):
+        st.write("🔹 **Feature Importance:**")
+        feature_importance = pd.DataFrame({'Feature': X.columns, 'Importance': heart_disease_model.feature_importances_})
+        feature_importance = feature_importance.sort_values(by='Importance', ascending=False)
+
+        fig, ax = plt.subplots(figsize=(6, 4))
+        sns.barplot(x="Importance", y="Feature", data=feature_importance, palette="viridis")
+        plt.xlabel("Importance Score")
+        plt.ylabel("Feature")
+        st.pyplot(fig)
