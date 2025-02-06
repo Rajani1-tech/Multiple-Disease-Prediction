@@ -48,23 +48,11 @@ if selected == 'Diabetes Prediction':
     with col2:
         Age = st.text_input('Age of the Person')
 
-    with col3: 
-        which_classifier = st.selectbox('Select the Classifier', ['SVM', 'DecisionTree', 'LogisticRegression'])
     diab_diagnosis = ''
 
-
-    if which_classifier == 'SVM':
-        test_accuracy = 0.7727271
-        diabetes_model = pickle.load(open('saved_models/diabetes_model_svm.sav', 'rb'))
-    elif which_classifier == 'DecisionTree':
-        test_accuracy = 0.694805
-        diabetes_model = pickle.load(open('saved_models/diabetes_model_decision_tree.sav', 'rb'))
-    elif which_classifier == 'LogisticRegression':
-        test_accuracy = 0.753246
-        diabetes_model = pickle.load(open('saved_models/diabetes_model_logistic_regression.sav', 'rb'))
-    else:
-        st.error('Invalid classifier')
-        st.stop()
+    test_accuracy = 0.753246
+    diabetes_model = pickle.load(open('saved_models/diabetes_model_logistic_regression.sav', 'rb'))
+   
 
     if st.button('Diabetes Test Result'):
 
@@ -76,9 +64,9 @@ if selected == 'Diabetes Prediction':
         diab_prediction = diabetes_model.predict([user_input])
 
         if diab_prediction[0] == 1:
-            diab_diagnosis = 'The person is diabetic using ' + which_classifier + ' The test accuracy of the model is ' + str(test_accuracy)  
+            diab_diagnosis = 'The person is diabetic using Logistic Regression Classifier. The test accuracy of the model is ' + str(test_accuracy)  
         else:
-            diab_diagnosis = 'The person is not diabetic ' + which_classifier + ' The test accuracy of the model is ' + str(test_accuracy)
+            diab_diagnosis = 'The person is not diabetic Logistic Regression Classifier. The test accuracy of the model is ' + str(test_accuracy)
 
     st.success(diab_diagnosis)
 
