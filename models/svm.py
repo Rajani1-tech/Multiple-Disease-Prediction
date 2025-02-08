@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 class SVM:
     def __init__(self, learning_rate=0.001, lambda_param=0.01, n_iters=1000):
@@ -47,15 +47,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 svm = SVM(learning_rate=0.001, lambda_param=0.01, n_iters=1000)
 svm.fit(X_train, y_train)
 
-# Predict and evaluate
-# predictions = svm.predict(X_test)
-# accuracy = np.mean(predictions == np.where(y_test <= 0, -1, 1))  # Convert y_test for consistency
-# print(f"Accuracy: {accuracy * 100:.2f}%")
-
+# Evaluate the model
 train_predictions = svm.predict(X_train)
 train_accuracy = np.mean(train_predictions == np.where(y_train <= 0, -1, 1))  # Convert y_train for consistency
 
-# Predict and evaluate on test data
 test_predictions = svm.predict(X_test)
 test_accuracy = np.mean(test_predictions == np.where(y_test <= 0, -1, 1))  # Convert y_test for consistency
 
