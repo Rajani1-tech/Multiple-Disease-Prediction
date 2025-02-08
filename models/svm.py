@@ -53,7 +53,3 @@ train_accuracy = np.mean(train_predictions == np.where(y_train <= 0, -1, 1))  # 
 
 test_predictions = svm.predict(X_test)
 test_accuracy = np.mean(test_predictions == np.where(y_test <= 0, -1, 1))  # Convert y_test for consistency
-
-# Print both accuracies
-print(f"Training Accuracy: {train_accuracy * 100:.2f}%")
-print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
