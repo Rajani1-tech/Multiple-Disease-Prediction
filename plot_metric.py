@@ -38,7 +38,7 @@ def plot_metrics(metrics_file='diabetic_model_metrics.csv'):
         for bar in bars:
             width = bar.get_width()
             plt.text(width, bar.get_y() + bar.get_height()/2,
-                     f'{width:.3f}',
+                     f'{100*width:.2f}%',
                      ha='left', va='center', fontsize=14)
   
     plt.legend(loc='lower right', fontsize=14)
