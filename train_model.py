@@ -134,14 +134,6 @@ def train_diabetic_model():
     
     train_metrics = calculate_metrics_total(Y_train, X_train_prediction)
     test_metrics = calculate_metrics_total(Y_test, X_test_prediction)
-   
-    print("\nTraining Set Metrics:")
-    for metric, value in train_metrics.items():
-        print(f"{metric}: {value}")
-    
-    print("\nTest Set Metrics:")
-    for metric, value in test_metrics.items():
-        print(f"{metric}: {value}")
  
     pickle.dump(classifier, open(filename, 'wb'))
   
@@ -150,6 +142,7 @@ def train_diabetic_model():
         'Training': list(train_metrics.values()),
         'Test': list(test_metrics.values())
     })
+    
     metrics_df.to_csv('./results/diabetic_model_metrics.csv', index=False)
     plot_metrics(metrics_file='./results/diabetic_model_metrics.csv')
     plot_pretty_confusion_matrix(metrics_file='./results/diabetic_model_metrics.csv')
