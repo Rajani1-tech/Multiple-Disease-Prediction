@@ -53,7 +53,6 @@ def app_diabetes():
 
     diab_diagnosis = ''
 
-    test_accuracy = 0.753246
     diabetes_model = pickle.load(open('saved_models/diabetes_model_decision_tree.sav', 'rb'))
    
     
@@ -71,9 +70,7 @@ def app_diabetes():
         
        
         user_input = [float(x) for x in user_input]
-
         diab_prediction = diabetes_model.predict([user_input])
-
         if diab_prediction[0] == 1:
             diab_diagnosis = 'The person is diabetic using Decision Tree Model.'
         else:
