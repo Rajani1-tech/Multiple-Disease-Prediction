@@ -105,46 +105,46 @@ def app_breast_cancer():
             diagnosis = 'Malignant (Cancerous)' if bc_prediction[0] == 1 else 'Benign (Non-Cancerous)'
             st.success(f'Prediction: {diagnosis}')
 
-    # Model Performance Section
-    st.subheader(" Model Performance on Test Data")
-    y_pred = svm.predict(X_test)
-    y_pred = np.where(y_pred == 1, 1, 0)
+            # Model Performance Section
+            st.subheader(" Model Performance on Test Data")
+            y_pred = svm.predict(X_test)
+            y_pred = np.where(y_pred == 1, 1, 0)
 
-    # Accuracy Score
-    accuracy = accuracy_score(y_test, y_pred)
-    st.write(f"**Model Accuracy:** {accuracy:.2f}")
+            # Accuracy Score
+            accuracy = accuracy_score(y_test, y_pred)
+            st.write(f"**Model Accuracy:** {accuracy:.2f}")
 
-    # Classification Report
-    st.write(" **Classification Report:**")
-    report_dict = classification_report(y_test, y_pred, output_dict=True)
-    report_df = pd.DataFrame(report_dict).transpose()
-    report_df = report_df[['precision', 'recall', 'f1-score', 'support']].round(2)
-    st.dataframe(report_df)
+            # Classification Report
+            st.write(" **Classification Report:**")
+            report_dict = classification_report(y_test, y_pred, output_dict=True)
+            report_df = pd.DataFrame(report_dict).transpose()
+            report_df = report_df[['precision', 'recall', 'f1-score', 'support']].round(2)
+            st.dataframe(report_df)
 
-    # Correlation Matrix Section
-    st.subheader("Correlation Matrix")
-    corr_matrix = df.corr()
+            # Correlation Matrix Section
+            st.subheader("Correlation Matrix")
+            corr_matrix = df[top_features].corr()
 
-    # Plot the heatmap of the correlation matrix
-    fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
-    plt.title("Correlation Matrix")
-    st.pyplot(fig)
+            # Plot the heatmap of the correlation matrix
+            fig, ax = plt.subplots(figsize=(10, 8))
+            sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
+            plt.title("Correlation Matrix")
+            st.pyplot(fig)
 
-    # Confusion Matrix
-    st.write(" **Confusion Matrix:**")
-    conf_matrix = confusion_matrix(y_test, y_pred)
+            # Confusion Matrix
+            st.write(" **Confusion Matrix:**")
+            conf_matrix = confusion_matrix(y_test, y_pred)
         
-    # Check for unique labels in y_test
-    unique_labels = np.unique(y_test)
+            # Check for unique labels in y_test
+            unique_labels = np.unique(y_test)
         
-    # Plot the heatmap with dynamic tick labels
-    fig, ax = plt.subplots(figsize=(5, 3))
-    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues",
+            # Plot the heatmap with dynamic tick labels
+            fig, ax = plt.subplots(figsize=(5, 3))
+            sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues",
                 xticklabels=unique_labels, yticklabels=unique_labels)
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    st.pyplot(fig)
+            plt.xlabel("Predicted")
+            plt.ylabel("Actual")
+            st.pyplot(fig)
 
 # Allow running the app standalone
 if __name__ == "__main__":
