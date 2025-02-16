@@ -2,6 +2,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from app_heart import app_heartdisease, model
+from app_breast_cancer import app_breast_cancer
 
 st.set_page_config(page_title="Health Assistant",
                    layout="wide",
@@ -20,3 +21,6 @@ with st.sidebar:
 
 if selected == 'Heart Disease Prediction':
     app_heartdisease(model)
+elif selected =='Breast Cancer Prediction':
+    app_breast_cancer()
+
