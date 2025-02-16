@@ -12,11 +12,11 @@ st.set_page_config(page_title="Health Assistant",
 with st.sidebar:
     selected = option_menu('Multiple Disease Prediction System',
 
-                           ['Diabetes Prediction',
+                           ['Diabetes Prediction', 'Heart Disease Prediction', 'Breast Cancer Prediction'
                             ],
                            menu_icon='hospital-fill',
-                           icons=['activity'],
-                           default_index=0)
+                            icons=['activity', 'heart', 'person'],
+                           default_index=1) 
 
 
 if selected == 'Diabetes Prediction':
