@@ -35,7 +35,7 @@ class LogisticRegression:
 
             if epoch % 100 == 0:
                 loss = self.compute_loss(y, y_pred)
-                print(f"Epoch {epoch}, Loss: {loss:.4f}")
+                #print(f"Epoch {epoch}, Loss: {loss:.4f}")
 
     def predict(self, X):
         linear_model = np.dot(X, self.weights) + self.bias
@@ -46,4 +46,4 @@ class LogisticRegression:
         os.makedirs(folder, exist_ok=True)
         np.save(f"{folder}/weights.npy", self.weights)
         np.save(f"{folder}/bias.npy", self.bias)
-        print("✅ Model trained and saved.")
+        #print("✅ Model trained and saved.")
