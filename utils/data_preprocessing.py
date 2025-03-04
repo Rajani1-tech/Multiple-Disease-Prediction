@@ -39,4 +39,4 @@ class DataPreprocessor:
         np.save("processed_data/X_test.npy", X_test)
         np.save("processed_data/y_test.npy", y_test)
 
-        print("✅ Data preprocessing complete. Saved in 'processed_data' folder.")
+        #print("✅ Data preprocessing complete. Saved in 'processed_data' folder.")
