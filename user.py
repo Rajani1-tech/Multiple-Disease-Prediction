@@ -1,20 +1,22 @@
 import streamlit as st
-import streamlit_authenticator as stauth
-import re
 import sqlite3
-from database import create_users_table  # Import the create_users_table function
-import hashlib  # Import hashlib for password hashing
+import re
+import hashlib
+from database import create_users_table 
+
 
 # Ensure the table exists when the app starts
 create_users_table()
 
-# Database connection and functions
+# Database connection function
 def create_connection():
     return sqlite3.connect('new_user.db')
 
+# Hashing function for passwords
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+# Insert new user into the database
 def insert_user(email, username, password):
     conn = create_connection()
     cursor = conn.cursor()
@@ -27,6 +29,7 @@ def insert_user(email, username, password):
     finally:
         conn.close()
 
+# Fetch all registered emails
 def get_user_emails():
     conn = create_connection()
     cursor = conn.cursor()
@@ -35,6 +38,7 @@ def get_user_emails():
     conn.close()
     return emails
 
+# Fetch all registered usernames
 def get_usernames():
     conn = create_connection()
     cursor = conn.cursor()
@@ -43,6 +47,7 @@ def get_usernames():
     conn.close()
     return usernames
 
+# Fetch user details based on email
 def get_user(email):
     conn = create_connection()
     cursor = conn.cursor()
@@ -51,16 +56,26 @@ def get_user(email):
     conn.close()
     return user
 
-# Form validation functions
+# Validate email format
 def validate_email(email):
-    pattern = r"^[a-zA-Z0-9-_]+@[a-zA-Z0-9]+\.[a-z]{1,3}$"
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(pattern, email))
 
+# Validate username format
 def validate_username(username):
     pattern = "^[a-zA-Z0-9]*$"
     return bool(re.match(pattern, username))
 
-# Sign up function
+# Check if users table exists
+def check_table():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users';")
+    table_exists = cursor.fetchone()
+    conn.close()
+    return bool(table_exists)
+
+# Sign Up function
 def sign_up():
     """Sign up form"""
     with st.form(key='signup', clear_on_submit=True):
@@ -70,37 +85,53 @@ def sign_up():
         password1 = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
         password2 = st.text_input(':blue[Confirm Password]', placeholder='Confirm Your Password', type='password')
 
-        # Form validation on submit
         if st.form_submit_button('Sign Up'):
-            if email and username and password1 and password2:
-                if validate_email(email):
-                    if email not in get_user_emails():
-                        if validate_username(username):
-                            if username not in get_usernames():
-                                if len(username) >= 2:
-                                    if len(password1) >= 6:
-                                        if password1 == password2:
-                                            hashed_password = hash_password(password2)  # Hash password before storing
-                                            success = insert_user(email, username, hashed_password)
-                                            if success:
-                                                st.success('Account created successfully!!')
-                                                st.balloons()
-                                            else:
-                                                st.error('Error creating account. Try again.')
-                                        else:
-                                            st.warning('Passwords Do Not Match')
-                                    else:
-                                        st.warning('Password is too Short')
-                                else:
-                                    st.warning('Username Too Short')
-                            else:
-                                st.warning('Username Already Exists')
-                        else:
-                            st.warning('Invalid Username')
-                    else:
-                        st.warning('Email Already Exists!!')
-                else:
-                    st.warning('Invalid Email')
+            # Debugging output
+            emails = get_user_emails()
+            usernames = get_usernames()
+            st.write("Emails in DB:", emails)
+            st.write("Usernames in DB:", usernames)
+
+            if not email or not username or not password1 or not password2:
+                st.warning('All fields are required')
+                return
+
+            if not validate_email(email):
+                st.warning('Invalid Email')
+                return
+
+            if email in emails:
+                st.warning('Email Already Exists!!')
+                return
+
+            if not validate_username(username):
+                st.warning('Invalid Username')
+                return
+
+            if username in usernames:
+                st.warning('Username Already Exists')
+                return
+
+            if len(username) < 2:
+                st.warning('Username Too Short')
+                return
+
+            if len(password1) < 6:
+                st.warning('Password is too Short')
+                return
+
+            if password1 != password2:
+                st.warning('Passwords Do Not Match')
+                return
+
+            # Hash password and store in database
+            hashed_password = hash_password(password2)
+            success = insert_user(email, username, hashed_password)
+            if success:
+                st.success('Account created successfully!!')
+                st.balloons()
+            else:
+                st.error('Error creating account. Try again.')
 
 # Login function
 def login():
@@ -111,29 +142,19 @@ def login():
         password = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
 
         if st.form_submit_button('Login'):
-            if email and password:
-                user = get_user(email)
-                if user:
-                    stored_password = user[2]  # Password is in the third column
-                    if hash_password(password) == stored_password:  # Compare hashed passwords
-                        st.success('Login successful!')
-                    else:
-                        st.error('Incorrect password')
+            if not email or not password:
+                st.warning('Both fields are required')
+                return
+
+            user = get_user(email)
+            if user:
+                stored_password = user[2]  # Password is in the third column
+                if hash_password(password) == stored_password:  # Compare hashed passwords
+                    st.success('Login successful!')
+                    st.session_state.logged_in = True
+                    st.rerun()  # Refresh the page to update the UI
                 else:
-                    st.error('User not found')
+                    st.error('Incorrect password')
+            else:
+                st.error('User not found')
 
-# Main function to toggle between Sign Up and Login
-def main():
-    """Main Function to Display SignUp/Login"""
-    st.title('Welcome to the Authentication System')
-
-    # Option to switch between login or signup
-    choice = st.radio("Choose an option", ['Sign Up', 'Login'])
-
-    if choice == 'Sign Up':
-        sign_up()
-    elif choice == 'Login':
-        login()
-
-if __name__ == "__main__":
-    main()
