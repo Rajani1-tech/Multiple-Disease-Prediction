@@ -74,28 +74,39 @@ def app_heartdisease(model):
         heart_diagnosis = 'The person has heart disease' if heart_prediction[0] == 1 else 'The person does not have heart disease'
         st.success(heart_diagnosis)
         show_performance = True
-    
     if show_performance:
-        st.subheader("📊 Model Performance on Test Data")
 
-        evaluator = ModelEvaluator()
-        evaluator.load_model()
-        evaluator.load_test_data()
-        accuracy, y_pred, conf_matrix, report_df = evaluator.evaluate()
+        st.subheader("Model Performance on Test Data")
+        col1, col2 = st.columns([7,3.27])
+        with col1:
+            st.image('heart_metrics.png')
 
-    # Display accuracy
-        st.write(f"**✅ Model Accuracy:** {accuracy:.2f}%")
+        with col2:
+            st.image('heart_confusion.png')
+  
+    
+    # if show_performance:
+    #     st.subheader("📊 Model Performance on Test Data")
 
-    # Display classification report
-        st.write("🔹 **Classification Report:**")
-        st.dataframe(report_df)
+    #     evaluator = ModelEvaluator()
+    #     evaluator.load_model()
+    #     evaluator.load_test_data()
+    #     accuracy, y_pred, conf_matrix, report_df = evaluator.evaluate()
 
-    # Display confusion matrix
-        st.write("🔹 **Confusion Matrix:**")
-        fig, ax = plt.subplots(figsize=(5, 3))
-        sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", 
-                xticklabels=['No Disease', 'Disease'], 
-                yticklabels=['No Disease', 'Disease'])
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        st.pyplot(fig)
+    # # Display accuracy
+    #     st.write(f"**✅ Model Accuracy:** {accuracy:.2f}%")
+
+    # # Display classification report
+    #     st.write("🔹 **Classification Report:**")
+    #     st.dataframe(report_df)
+
+    # # Display confusion matrix
+    #     st.write("🔹 **Confusion Matrix:**")
+    #     fig, ax = plt.subplots(figsize=(5, 3))
+    #     sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", 
+    #             xticklabels=['No Disease', 'Disease'], 
+    #             yticklabels=['No Disease', 'Disease'])
+    #     plt.xlabel("Predicted")
+    #     plt.ylabel("Actual")
+    #     st.pyplot(fig)
+        
