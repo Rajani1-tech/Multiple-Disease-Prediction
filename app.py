@@ -21,23 +21,23 @@ def load_health_assistant():
     """Health Assistant Page"""
     with st.sidebar:
         selected = option_menu('Multiple Disease Prediction System',
-                               ['Diabetes Prediction', 'Heart Disease Prediction', 'Breast Cancer Prediction'],
+                               ['Diabetes Prediction', 'Heart Disease Prediction'],
                                menu_icon='hospital-fill',
-                               icons=['activity', 'heart', 'person'],
+                               icons=['activity', 'heart'],
                                default_index=1)
 
     if selected == 'Diabetes Prediction':
         app_diabetes()
     elif selected == 'Heart Disease Prediction':
         app_heartdisease(model)
-    elif selected == 'Breast Cancer Prediction':
-        app_breast_cancer()
+    #elif selected == 'Breast Cancer Prediction':
+       # app_breast_cancer()
 
 def main():
     """Main Function to Display SignUp/Login"""
     # Check if user is logged in
     if not  st.session_state.logged_in:
-        st.title("welcome to Health Assistant 🏥")
+        st.title("Welcome to Multiple Disease Prediction System 🏥")
         
         choice = st.radio("Choose an option", ['Sign Up', 'Login'])
 
