@@ -1,30 +1,39 @@
-
 import streamlit as st
 import numpy as np
 import pandas as pd
+import sqlite3
+import json
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 
 from utils.data_preprocessing import DataPreprocessor
 from models.logistic_regression import LogisticRegression
 from utils.model_evaluation import ModelEvaluator
 
-
-
+# Load and preprocess data
 preprocessor = DataPreprocessor("dataset/heart.csv")
 preprocessor.load_data()
 preprocessor.normalize_data()
 X_train, y_train, X_val, y_val, X_test, y_test = preprocessor.split_data()
 preprocessor.save_data(X_train, y_train, X_val, y_val, X_test, y_test)
 
-model = LogisticRegression(learning_rate=0.01, epochs =1000)
+# Train the model
+model = LogisticRegression(learning_rate=0.01, epochs=1000)
 model.fit(X_train, y_train)
 model.save_model()
 
+def save_user_prediction(email, disease, input_data, result):
+    conn = sqlite3.connect('new_user.db')
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO user_predictions (email, disease, input_parameters, prediction_result) VALUES (?, ?, ?, ?)", 
+                   (email, disease, json.dumps(input_data), result))
+    conn.commit()
+    conn.close()
 
 def app_heartdisease(model):
     st.title('Heart Disease Prediction using ML')
+    
+    email = st.session_state.get('user_email', 'Guest')  # Get logged-in user's email
     
     # Input Fields
     col1, col2, col3 = st.columns(3)
@@ -74,39 +83,14 @@ def app_heartdisease(model):
         heart_diagnosis = 'The person has heart disease' if heart_prediction[0] == 1 else 'The person does not have heart disease'
         st.success(heart_diagnosis)
         show_performance = True
-    if show_performance:
-
-        st.subheader("Model Performance on Test Data")
-        col1, col2 = st.columns([7,3.27])
-        with col1:
-            st.image('heart_metrics.png')
-
-        with col2:
-            st.image('heart_confusion.png')
-  
-    
-    # if show_performance:
-    #     st.subheader("📊 Model Performance on Test Data")
-
-    #     evaluator = ModelEvaluator()
-    #     evaluator.load_model()
-    #     evaluator.load_test_data()
-    #     accuracy, y_pred, conf_matrix, report_df = evaluator.evaluate()
-
-    # # Display accuracy
-    #     st.write(f"**✅ Model Accuracy:** {accuracy:.2f}%")
-
-    # # Display classification report
-    #     st.write("🔹 **Classification Report:**")
-    #     st.dataframe(report_df)
-
-    # # Display confusion matrix
-    #     st.write("🔹 **Confusion Matrix:**")
-    #     fig, ax = plt.subplots(figsize=(5, 3))
-    #     sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", 
-    #             xticklabels=['No Disease', 'Disease'], 
-    #             yticklabels=['No Disease', 'Disease'])
-    #     plt.xlabel("Predicted")
-    #     plt.ylabel("Actual")
-    #     st.pyplot(fig)
         
+        # Save data to database
+        save_user_prediction(email, "Heart Disease", user_input, heart_diagnosis)
+    
+    if show_performance:
+        st.subheader("Model Performance on Test Data")
+        col1, col2 = st.columns([7, 3.27])
+        with col1:
+            st.image('heart_disease_metrics.png')
+        with col2:
+            st.image('heart_disease_confusion_matrix.png')
