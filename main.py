@@ -24,7 +24,16 @@ def main():
     evaluator = ModelEvaluator()
     evaluator.load_model()
     evaluator.load_test_data()
-    evaluator.evaluate()
+
+    accuracy, y_pred, conf_matrix, report_df = evaluator.evaluate()
+
+    # Plot and save the confusion matrix
+    conf_matrix_path = evaluator.plot_confusion_matrix_heart(conf_matrix)
+    print(f"Confusion matrix plot saved to {conf_matrix_path}")
+
+    # Plot and save the metrics
+    metrics_path = evaluator.plot_metrics_heart(report_df, accuracy)
+    print(f"Metrics plot saved to {metrics_path}")
 
 if __name__ == "__main__":
     main()
