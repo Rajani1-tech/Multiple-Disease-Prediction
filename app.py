@@ -1,9 +1,8 @@
 import streamlit as st
-from user import login, sign_up
+from user import login, sign_up, check_recent_predictions
 from streamlit_option_menu import option_menu
 from app_diabetes import app_diabetes
-from app_heart import app_heartdisease, model
-from app_breast_cancer import app_breast_cancer
+from app_heart import app_heartdisease, model, show_heart_model_test_result, show_eda_for_heart_disease, show_logistic_regression_description
 from user import get_user_predictions  # Import database function
 
 # Set page config at the top before any other Streamlit command
@@ -25,16 +24,22 @@ def load_health_assistant():
             'Diabetes Prediction',
             'Heart Disease Prediction',
             'My Predictions',
-            'Model',
-            'Heart Disease Model Test Result',
+            'Heart Model Test Result',
             'Diabetes Model Test Result',
             'EDA for Heart Disease',
-            'EDA for Diabetes Disease'
+            'EDA for Diabetes Disease',
+            'Model Description'
         ],
         menu_icon='hospital-fill',
-        icons=['activity', 'heart', 'clock', 'database', 'bar-chart', 'bar-chart', 'graph-up', 'graph-up'],
+        icons=['activity', 'heart', 'clock', 'bar-chart', 'bar-chart', 'graph-up', 'graph-up', 'database'],
         default_index=1
     )
+      # Check for alert if the user has predicted heart or diabetes disease 3 times within a month
+    if selected in ['Heart Disease Prediction', 'Diabetes Prediction']:
+        disease_type = 'Heart Disease' if selected == 'Heart Disease Prediction' else 'Diabetes'
+        if check_recent_predictions(email, disease_type):
+            st.warning(f"⚠️ **Alert:** You have predicted {disease_type} 3 or more times in the last month. Please consult a nearby doctor.")
+    
 
     if selected == 'Diabetes Prediction':
         app_diabetes()
@@ -43,7 +48,6 @@ def load_health_assistant():
     elif selected == 'My Predictions':
         st.subheader("📜 My Previous Predictions")
         predictions = get_user_predictions(email)
-
         if predictions:
             for disease, inputs, result, timestamp in predictions:
                 st.write(f"🦠 **Disease:** {disease}")
@@ -53,6 +57,12 @@ def load_health_assistant():
                 st.markdown("---")
         else:
             st.info("No past predictions found.")
+    elif selected == 'Heart Model Test Result':
+        show_heart_model_test_result()
+    elif selected ==   'EDA for Heart Disease':
+        show_eda_for_heart_disease()
+    elif selected ==   'Model Description':
+        show_logistic_regression_description()
 
 
 def main():
