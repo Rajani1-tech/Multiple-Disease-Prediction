@@ -5,10 +5,10 @@ import sqlite3
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 from utils.data_preprocessing import DataPreprocessor
 from models.logistic_regression import LogisticRegression
 from utils.model_evaluation import ModelEvaluator
+from datetime import datetime, timedelta
 
 # Load and preprocess data
 preprocessor = DataPreprocessor("dataset/heart.csv")
@@ -29,6 +29,26 @@ def save_user_prediction(email, disease, input_data, result):
                    (email, disease, json.dumps(input_data), result))
     conn.commit()
     conn.close()
+
+def check_recent_predictions(email, disease_type):
+    conn = sqlite3.connect('new_user.db')
+    cursor = conn.cursor()
+    
+    # Get the current date and the date 30 days ago
+    current_date = datetime.now()
+    thirty_days_ago = current_date - timedelta(days=30)
+    
+    # Query to get all the predictions for the specific disease and user within the last 30 days
+    cursor.execute("""
+        SELECT * FROM user_predictions
+        WHERE email = ? AND disease = ? AND prediction_result = ? AND timestamp >= ?
+    """, (email, disease_type, 'The person has heart disease', thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
+    
+    predictions = cursor.fetchall()
+    conn.close()
+
+    # Return True if there are 3 or more positive predictions in the last 30 days
+    return len(predictions) >= 3    
 
 def app_heartdisease(model):
     st.title('Heart Disease Prediction using ML')
@@ -77,6 +97,11 @@ def app_heartdisease(model):
     heart_diagnosis = ''
     show_performance = False
     
+
+    # Check if user has predicted heart disease 3 times within the last 30 days
+    if check_recent_predictions(email, 'Heart Disease'):
+        st.warning("⚠️ **Alert:** You have predicted **Heart Disease** 3 or more times in the last 30 days with a positive result. Please consult a doctor.")
+
     if st.button('Heart Disease Test Result'):
         user_input = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
         heart_prediction = model.predict([user_input])
