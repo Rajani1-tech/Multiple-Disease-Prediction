@@ -87,13 +87,13 @@ def app_heartdisease(model):
         # Save data to database
         save_user_prediction(email, "Heart Disease", user_input, heart_diagnosis)
     
-    if show_performance:
-        st.subheader("Model Performance on Test Data")
-        col1, col2 = st.columns([7, 3.27])
-        with col1:
-            st.image('heart_disease_metrics_vertical.png')
-        with col2:
-            st.image('heart_disease_confusion_matrix.png')
+    # if show_performance:
+    #     st.subheader("Model Performance on Test Data")
+    #     col1, col2 = st.columns([7, 3.27])
+    #     with col1:
+    #         st.image('heart_disease_metrics_vertical.png')
+    #     with col2:
+    #         st.image('heart_disease_confusion_matrix.png')
 
 
 def show_heart_model_test_result():
@@ -141,12 +141,6 @@ def show_heart_model_test_result():
     "- **True Negatives (TN):** Correctly predicted non-heart disease cases.\n"
     "- **False Negatives (FN):** Incorrectly predicted non-heart disease cases (patients with heart disease predicted not to have it)."
 )
-
-
-
-
-    
-
 
 def show_eda_for_heart_disease():
     """Displays EDA (Exploratory Data Analysis) Results for Heart Disease"""
@@ -201,6 +195,109 @@ def show_eda_for_heart_disease():
         "It helps us identify which features are strongly correlated with heart disease diagnosis and with each other. "
         "For example, a high correlation between cholesterol levels and heart disease may suggest that this feature is an important predictor."
     )
+import streamlit as st
+
+def show_logistic_regression_description():
+    """Display Logistic Regression Model Description for Heart Disease Prediction"""
+
+    st.title("Model Description: Logistic Regression for Heart Disease Prediction")
+
+    # Logistic Regression Explanation
+    st.subheader("📊 Logistic Regression Overview")
+    st.write("""
+    Logistic Regression is a type of statistical model used for binary classification tasks, 
+    such as predicting whether a person has heart disease or not. It is based on the following equation:
+    
+    $$y = \sigma(wX + b)$$
+
+    Where:
+    - $y$ is the predicted probability of the outcome (i.e., heart disease).
+    - $w$ represents the weights of the features.
+    - $X$ is the feature vector (i.e., the inputs like age, sex, blood pressure, etc.).
+    - $b$ is the bias term.
+    - $\sigma$ is the **sigmoid function** that maps the linear combination of features to a probability value between 0 and 1.
+    """)
+
+    # Sigmoid Function Explanation
+    st.subheader("🔑 Sigmoid Function")
+    st.write("""
+    The **sigmoid function** is crucial in logistic regression as it transforms the output of the linear equation 
+    into a probability. It is defined as:
+
+    $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+    The sigmoid function outputs values between 0 and 1, which makes it ideal for predicting probabilities.
+    
+    It maps any input value to a range between 0 and 1, which is interpreted as the probability of an event happening 
+    (e.g., whether a person has heart disease or not).
+    
+    Here's a diagram of the sigmoid function:
+    """)
+
+    # Show Sigmoid Function Diagram
+    st.image('sigmoid_function.png', caption="Sigmoid Function", use_column_width=True)
+
+    # Binary Cross-Entropy (BCE) Loss Explanation
+    st.subheader("⚖️ Binary Cross-Entropy Loss (BCE Loss)")
+    st.write("""
+    **Binary Cross-Entropy Loss (BCE Loss)** is used as the cost function in logistic regression for binary classification.
+    It measures how well the model's predicted probabilities match the true labels. The BCE loss is calculated as:
+    
+    $$L(y, \hat{y}) = - \left[ y \log(\hat{y}) + (1 - y) \log(1 - \hat{y}) \right]$$
+    
+    Where:
+    - $y$ is the true label (1 if heart disease is present, 0 if not).
+    - $\hat{y}$ is the predicted probability (from the sigmoid function).
+    
+    The goal is to minimize this loss during model training to improve the model's accuracy.
+
+    Here’s a diagram to better visualize BCE Loss:
+    """)
+
+    # Show BCE Loss Diagram
+    st.image('bce_loss.png', caption="Binary Cross-Entropy Loss", use_column_width=True)
+
+    # Gradient Descent Explanation
+    st.subheader("🔄 Gradient Descent")
+    st.write("""
+    **Gradient Descent** is an optimization algorithm used to minimize the loss function by iteratively adjusting the model's 
+    parameters (weights and bias). It updates the model's parameters in the direction of the steepest decrease in the 
+    loss function, as computed by the gradient.
+
+    In logistic regression, gradient descent is used to minimize the binary cross-entropy loss. The algorithm works by 
+    updating the parameters in the following manner:
+
+    $$w = w - \eta \frac{\partial L}{\partial w}$$
+    $$b = b - \eta \frac{\partial L}{\partial b}$$
+
+    Where:
+    - $w$ and $b$ are the weights and bias, respectively.
+    - $\eta$ is the learning rate, which controls the step size of the updates.
+    - $\frac{\partial L}{\partial w}$ and $\frac{\partial L}{\partial b}$ are the gradients of the loss with respect to the weights and bias.
+
+    Gradient descent helps the model learn the optimal parameters to minimize the loss and improve prediction accuracy.
+    """)
+
+    # Show Gradient Descent Diagram
+    st.image('gradient_descent.png', caption="Gradient Descent", use_column_width=True)
+
+    # Why Logistic Regression for Heart Disease Prediction?
+    st.subheader("💡 Why Logistic Regression for Heart Disease Prediction?")
+    st.write("""
+    Logistic regression is an ideal choice for heart disease prediction because:
+    - **Binary Classification**: The problem of predicting whether a person has heart disease or not is a binary classification task, 
+      which aligns perfectly with logistic regression.
+    - **Interpretable**: Logistic regression is a simple and interpretable model, making it easier to understand how the 
+      input features (e.g., age, cholesterol, blood pressure) influence the prediction.
+    - **Efficient**: Logistic regression performs well even with smaller datasets and is computationally efficient.
+    - **Probabilistic Output**: The model provides probabilities, which allows us to measure the confidence of the prediction 
+      (e.g., 80% chance of having heart disease).
+
+    These characteristics make logistic regression a reliable model for predicting heart disease.
+    """)
+
+
+
 
 
    
