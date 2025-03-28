@@ -35,16 +35,6 @@ def load_health_assistant():
         default_index=1
     )
      
-    # Check for alert if the user has predicted heart or diabetes disease 3 times within a month
-    if selected == 'Heart Disease Prediction':
-        disease_type = 'Heart Disease'
-        if check_recent_disease_predictions(email, disease_type):
-            st.warning(f"⚠️ **Alert:** You have predicted **Heart Disease** 3 or more times in the last month, and the result indicates presence of the disease. Please consult a nearby doctor.")
-    
-    if selected == 'Diabetes Prediction':
-        disease_type = 'Diabetes'
-        if check_recent_disease_predictions(email, disease_type):
-            st.warning(f"⚠️ **Alert:** You have predicted **Diabetes** 3 or more times in the last month, and the result indicates presence of the disease. Please consult a nearby doctor.")
 
     if selected == 'Diabetes Prediction':
         app_diabetes()
