@@ -224,10 +224,10 @@ def login():
                 st.error('User not found')
 import datetime
 
-def check_recent_predictions(email, disease_type):
+def check_recent_disease_predictions(email, disease_type):
     """
     Check if the user has predicted a particular disease (heart or diabetes) 
-    3 or more times in the last 30 days.
+    with the diagnosis result (1) 3 or more times in the last 30 days.
     """
     # Get the current date and calculate 30 days ago
     current_date = datetime.datetime.now()
@@ -237,14 +237,12 @@ def check_recent_predictions(email, disease_type):
     predictions = get_user_predictions(email)
 
     # Filter the predictions for the desired disease (heart or diabetes) within the last 30 days
-    recent_predictions = [pred for pred in predictions if pred[0] == disease_type and datetime.datetime.strptime(pred[3], '%Y-%m-%d %H:%M:%S') > thirty_days_ago]
+    # and check if the prediction result is 1 (i.e., the disease is present)
+    recent_predictions = [pred for pred in predictions if pred[0] == disease_type and 
+                          pred[2] == 1 and  # Prediction result indicating presence of the disease
+                          datetime.datetime.strptime(pred[3], '%Y-%m-%d %H:%M:%S') > thirty_days_ago]
 
     # If there are 3 or more predictions in the last 30 days, return True
     return len(recent_predictions) >= 3
-
-
-
-
-
 
 
