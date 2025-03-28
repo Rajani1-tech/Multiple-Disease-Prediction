@@ -75,36 +75,42 @@ class ModelEvaluator:
         return save_path
 
     def plot_metrics_heart(self, report_df, accuracy):
-        metrics = ['Precision', 'Recall', 'F1-Score']
+        metrics = ['Precision', 'Recall', 'F1-Score', 'Accuracy']
+        
         positive_metrics = report_df.loc['Disease (1)', ['precision', 'recall', 'f1-score']].values
         negative_metrics = report_df.loc['No Disease (0)', ['precision', 'recall', 'f1-score']].values
+        accuracy_metric = accuracy / 100  # Convert to decimal for consistency
 
-        plt.figure(figsize=(12, 8))
-        y_pos = np.arange(len(metrics))
+        x_pos = np.arange(len(metrics))  # X-axis positions
         bar_width = 0.3
 
-        plt.barh(y_pos - bar_width/2, positive_metrics, height=bar_width, label='Disease')
-        plt.barh(y_pos + bar_width/2, negative_metrics, height=bar_width, label='No Disease')
+        plt.figure(figsize=(10, 6))
 
-        plt.barh(len(metrics), accuracy / 100, height=bar_width, label='Overall Accuracy', color='gold')
-        metrics.append('Accuracy')
+        # Plot vertical bars
+        plt.bar(x_pos[:-1] - bar_width/2, positive_metrics, width=bar_width, label='Disease', color='steelblue')
+        plt.bar(x_pos[:-1] + bar_width/2, negative_metrics, width=bar_width, label='No Disease', color='orangered')
 
+        # Accuracy bar
+        plt.bar(x_pos[-1], accuracy_metric, width=bar_width, label='Overall Accuracy', color='gold')
+
+        # Annotate bars with values
         for i, value in enumerate(positive_metrics):
-            plt.text(value + 0.01, i - bar_width/2, f'{value * 100:.1f}%', va='center', fontsize=12, color='white')
+            plt.text(x_pos[i] - bar_width/2, value + 0.02, f'{value * 100:.1f}%', ha='center', fontsize=12, color='black')
 
         for i, value in enumerate(negative_metrics):
-            plt.text(value + 0.01, i + bar_width/2, f'{value * 100:.1f}%', va='center', fontsize=12, color='white')
+            plt.text(x_pos[i] + bar_width/2, value + 0.02, f'{value * 100:.1f}%', ha='center', fontsize=12, color='black')
 
-        plt.text((accuracy/100) + 0.01, len(metrics)- 1, f'{accuracy:.1f}%', va='center', fontsize=12,color='white', fontweight='bold' )
-        
-        plt.yticks(np.arange(len(metrics)), metrics, fontsize=14)
-        plt.xlabel('Value', fontsize=14)
-        plt.title('Model Performance Metrics of heart disease', fontsize=18)
-        plt.legend(loc='lower right')
-        plt.grid(True, axis='x', linestyle='--', alpha=0.7)
-        #plt.style.use('')
+        plt.text(x_pos[-1], accuracy_metric + 0.02, f'{accuracy:.1f}%', ha='center', fontsize=12, color='black', fontweight='bold')
 
-        save_path = 'heart_disease_metrics.png'
+        # Formatting
+        plt.xticks(x_pos, metrics, fontsize=14)  # X-axis labels
+        plt.ylabel('Value', fontsize=14)
+        plt.title('Model Performance Metrics for Heart Disease', fontsize=18)
+        plt.legend(loc='upper right')
+        plt.grid(True, axis='y', linestyle='--', alpha=0.7)  # Grid on Y-axis
+
+        # Save the figure
+        save_path = 'heart_disease_metrics_vertical.png'
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         plt.close()
         return save_path
