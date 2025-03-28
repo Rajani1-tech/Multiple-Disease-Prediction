@@ -3,14 +3,40 @@ import sqlite3
 import re
 import hashlib
 from database import create_users_table 
-
-
-# Ensure the table exists when the app starts
-create_users_table()
+import json
 
 # Database connection function
 def create_connection():
     return sqlite3.connect('new_user.db')
+
+# Create Users Table
+def create_users_table():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+                        email TEXT PRIMARY KEY,
+                        username TEXT UNIQUE,
+                        password TEXT)''')
+    conn.commit()
+    conn.close()
+
+# Create Predictions Table
+def create_predictions_table():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS user_predictions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        email TEXT,
+                        disease TEXT,
+                        input_parameters TEXT,
+                        prediction_result TEXT,
+                        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+    conn.commit()
+    conn.close()
+
+# Ensure both tables exist when the app starts
+create_users_table()
+create_predictions_table()
 
 # Hashing function for passwords
 def hash_password(password):
@@ -28,6 +54,15 @@ def insert_user(email, username, password):
         return False
     finally:
         conn.close()
+
+# Fetch user details based on email
+def get_user(email):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+    user = cursor.fetchone()
+    conn.close()
+    return user
 
 # Fetch all registered emails
 def get_user_emails():
@@ -47,15 +82,6 @@ def get_usernames():
     conn.close()
     return usernames
 
-# Fetch user details based on email
-def get_user(email):
-    conn = create_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE email=?", (email,))
-    user = cursor.fetchone()
-    conn.close()
-    return user
-
 # Validate email format
 def validate_email(email):
     pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -74,6 +100,26 @@ def check_table():
     table_exists = cursor.fetchone()
     conn.close()
     return bool(table_exists)
+
+# Save user prediction to database
+def save_user_prediction(email, disease, input_data, result):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO user_predictions (email, disease, input_parameters, prediction_result) VALUES (?, ?, ?, ?)", 
+                   (email, disease, json.dumps(input_data), result))
+    conn.commit()
+    conn.close()
+
+# Fetch user's past predictions
+def get_user_predictions(email):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT disease, input_parameters, prediction_result, timestamp FROM user_predictions WHERE email=?", (email,))
+    predictions = cursor.fetchall()
+    conn.close()
+    return predictions
+
+
 
 # Sign Up function
 def sign_up():
@@ -133,28 +179,51 @@ def sign_up():
             else:
                 st.error('Error creating account. Try again.')
 
-# Login function
+# # Login function
+# def login():
+#     """Login Form"""
+#     with st.form(key='login'):
+#         st.subheader(':green[Login]')
+#         email = st.text_input(':blue[Email]', placeholder='Enter Your Email')
+#         password = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
+
+#         if st.form_submit_button('Login'):
+#             if not email or not password:
+#                 st.warning('Both fields are required')
+#                 return
+
+#             user = get_user(email)
+#             if user:
+#                 stored_password = user[2]  # Password is in the third column
+#                 if hash_password(password) == stored_password:  # Compare hashed passwords
+#                     st.success('Login successful!')
+#                     st.session_state.logged_in = True
+#                     st.rerun()  # Refresh the page to update the UI
+#                 else:
+#                     st.error('Incorrect password')
+#             else:
+#                 st.error('User not found')
 def login():
-    """Login Form"""
     with st.form(key='login'):
         st.subheader(':green[Login]')
         email = st.text_input(':blue[Email]', placeholder='Enter Your Email')
         password = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
 
         if st.form_submit_button('Login'):
-            if not email or not password:
-                st.warning('Both fields are required')
-                return
-
             user = get_user(email)
             if user:
-                stored_password = user[2]  # Password is in the third column
-                if hash_password(password) == stored_password:  # Compare hashed passwords
+                stored_password = user[2]
+                if hash_password(password) == stored_password:
                     st.success('Login successful!')
                     st.session_state.logged_in = True
-                    st.rerun()  # Refresh the page to update the UI
+                    st.session_state.user_email = email  # Store user email
+                    st.rerun()
                 else:
                     st.error('Incorrect password')
             else:
                 st.error('User not found')
+
+
+
+
 
