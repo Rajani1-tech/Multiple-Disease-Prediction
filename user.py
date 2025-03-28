@@ -222,6 +222,27 @@ def login():
                     st.error('Incorrect password')
             else:
                 st.error('User not found')
+import datetime
+
+def check_recent_predictions(email, disease_type):
+    """
+    Check if the user has predicted a particular disease (heart or diabetes) 
+    3 or more times in the last 30 days.
+    """
+    # Get the current date and calculate 30 days ago
+    current_date = datetime.datetime.now()
+    thirty_days_ago = current_date - datetime.timedelta(days=30)
+
+    # Query the database to get predictions for this user within the last 30 days
+    predictions = get_user_predictions(email)
+
+    # Filter the predictions for the desired disease (heart or diabetes) within the last 30 days
+    recent_predictions = [pred for pred in predictions if pred[0] == disease_type and datetime.datetime.strptime(pred[3], '%Y-%m-%d %H:%M:%S') > thirty_days_ago]
+
+    # If there are 3 or more predictions in the last 30 days, return True
+    return len(recent_predictions) >= 3
+
+
 
 
 
