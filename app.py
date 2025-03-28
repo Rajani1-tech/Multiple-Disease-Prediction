@@ -19,11 +19,22 @@ def load_health_assistant():
     email = st.session_state.get('user_email', 'Guest')  # Get logged-in user's email
     
     with st.sidebar:
-        selected = option_menu('Multiple Disease Prediction System',
-                               ['Diabetes Prediction', 'Heart Disease Prediction', 'My Predictions', 'Model'],
-                               menu_icon='hospital-fill',
-                               icons=['activity', 'heart', 'clock'],
-                               default_index=1)
+      selected = option_menu(
+        'Multiple Disease Prediction System',
+        [
+            'Diabetes Prediction',
+            'Heart Disease Prediction',
+            'My Predictions',
+            'Model',
+            'Heart Disease Model Test Result',
+            'Diabetes Model Test Result',
+            'EDA for Heart Disease',
+            'EDA for Diabetes Disease'
+        ],
+        menu_icon='hospital-fill',
+        icons=['activity', 'heart', 'clock', 'database', 'bar-chart', 'bar-chart', 'graph-up', 'graph-up'],
+        default_index=1
+    )
 
     if selected == 'Diabetes Prediction':
         app_diabetes()
