@@ -1,5 +1,5 @@
 import streamlit as st
-from user import login, sign_up, check_recent_predictions
+from user import login, sign_up, check_recent_disease_predictions
 from streamlit_option_menu import option_menu
 from app_diabetes import app_diabetes
 from app_heart import app_heartdisease, model, show_heart_model_test_result, show_eda_for_heart_disease, show_logistic_regression_description
@@ -34,12 +34,17 @@ def load_health_assistant():
         icons=['activity', 'heart', 'clock', 'bar-chart', 'bar-chart', 'graph-up', 'graph-up', 'database'],
         default_index=1
     )
-      # Check for alert if the user has predicted heart or diabetes disease 3 times within a month
-    if selected in ['Heart Disease Prediction', 'Diabetes Prediction']:
-        disease_type = 'Heart Disease' if selected == 'Heart Disease Prediction' else 'Diabetes'
-        if check_recent_predictions(email, disease_type):
-            st.warning(f"⚠️ **Alert:** You have predicted {disease_type} 3 or more times in the last month. Please consult a nearby doctor.")
+     
+    # Check for alert if the user has predicted heart or diabetes disease 3 times within a month
+    if selected == 'Heart Disease Prediction':
+        disease_type = 'Heart Disease'
+        if check_recent_disease_predictions(email, disease_type):
+            st.warning(f"⚠️ **Alert:** You have predicted **Heart Disease** 3 or more times in the last month, and the result indicates presence of the disease. Please consult a nearby doctor.")
     
+    if selected == 'Diabetes Prediction':
+        disease_type = 'Diabetes'
+        if check_recent_disease_predictions(email, disease_type):
+            st.warning(f"⚠️ **Alert:** You have predicted **Diabetes** 3 or more times in the last month, and the result indicates presence of the disease. Please consult a nearby doctor.")
 
     if selected == 'Diabetes Prediction':
         app_diabetes()
