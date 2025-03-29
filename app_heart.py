@@ -188,7 +188,7 @@ def show_eda_for_heart_disease():
 
     # Display Heart Disease Pie Chart (for diagnosis distribution)
     st.subheader("🫀 Distribution of Heart Disease Diagnoses (Pie Chart)")
-    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA /Heart_Disease_Pie.png', caption="Distribution of Heart Disease Diagnosis (1: Disease Present, 0: Disease Absent)")
+    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Heart_Disease_Pie.png', caption="Distribution of Heart Disease Diagnosis (1: Disease Present, 0: Disease Absent)")
     st.write(
         "This pie chart illustrates the proportion of individuals diagnosed with heart disease "
         "versus those without it. A higher percentage of one category over the other may indicate "
@@ -197,7 +197,7 @@ def show_eda_for_heart_disease():
 
     # Display Categorical Data Distribution
     st.subheader("📊 Distribution of Categorical Data")
-    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA /Categorical_data.png', caption="Distribution of Categorical Features (e.g., Chest Pain Type, Fasting Blood Sugar)")
+    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Categorical_data.png', caption="Distribution of Categorical Features (e.g., Chest Pain Type, Fasting Blood Sugar)")
     st.write(
         "This bar plot shows the distribution of categorical features, such as chest pain type and "
         "fasting blood sugar. These features are important for diagnosing heart disease and understanding "
@@ -206,7 +206,7 @@ def show_eda_for_heart_disease():
 
     # Display Numerical Data Distribution
     st.subheader("📈 Distribution of Numerical Data")
-    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA /Numerical_data.png', caption="Distribution of Numerical Features (e.g., Age, Cholesterol, Blood Pressure)")
+    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Numerical_data.png', caption="Distribution of Numerical Features (e.g., Age, Cholesterol, Blood Pressure)")
     st.write(
         "This plot shows the distribution of numerical features like age, cholesterol levels, and blood pressure. "
         "Understanding the distribution of these features helps in identifying patterns and outliers, which can influence the model's performance."
@@ -214,7 +214,7 @@ def show_eda_for_heart_disease():
 
     # Display Correlation Heatmap
     st.subheader("🔑 Correlation Heatmap of Features")
-    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA /Correlation_Heatmap.png', caption="Correlation Heatmap (Shows how features are related to each other)")
+    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Correlation_Heatmap.png', caption="Correlation Heatmap (Shows how features are related to each other)")
     st.write(
         "The correlation heatmap shows the strength of relationships between different features. "
         "It helps us identify which features are strongly correlated with heart disease diagnosis and with each other. "
