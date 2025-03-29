@@ -2,6 +2,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 def plot_metrics(metrics_file='diabetic_model_metrics.csv'):
     '''
@@ -12,34 +15,44 @@ def plot_metrics(metrics_file='diabetic_model_metrics.csv'):
     positive_metrics = ['pos_precision', 'pos_recall', 'pos_f1_score']
     negative_metrics = ['neg_precision', 'neg_recall', 'neg_f1_score']
     overall_metric = 'accuracy'  
+    
     positive_data = df[df['Metric'].isin(positive_metrics)]['Test'].values
     negative_data = df[df['Metric'].isin(negative_metrics)]['Test'].values
     overall_data = df[df['Metric'] == overall_metric]['Test'].values   
+    
     plt.style.use('dark_background')
     plt.figure(figsize=(12, 8))  
-    y_pos = np.arange(len(metrics))
-    bar_width = 0.3  
-    bars1 = plt.barh(y_pos - bar_width/2, positive_data, height=bar_width, color='#b8b8b8', label='Diabetic')
-    bars2 = plt.barh(y_pos + bar_width/2, negative_data, height=bar_width, color='#1a80bb', label='Non-Diabetic')  
+
+    x_pos = np.arange(len(metrics))  # X-axis positions for the bars
+    bar_width = 0.3  # Width of the bars
+
+    # Plot bars for positive and negative metrics
+    bars1 = plt.bar(x_pos - bar_width/2, positive_data, width=bar_width, color='#b8b8b8', label='Diabetic')
+    bars2 = plt.bar(x_pos + bar_width/2, negative_data, width=bar_width, color='#1a80bb', label='Non-Diabetic')
+
     if len(overall_data) > 0:
-        accuracy_bar = plt.barh(len(metrics), overall_data[0], height=bar_width, color='#ffcc00', label='Overall')
+        accuracy_bar = plt.bar(len(metrics), overall_data[0], width=bar_width, color='#ffcc00', label='Overall')
         metrics.append('Accuracy')   
-    plt.yticks(np.arange(len(metrics)), metrics, fontsize=14)
-    plt.xticks(fontsize=14)
-    plt.xlabel('Value', labelpad=15, fontsize=14)
-    plt.xlim(0, 1)
-    plt.title('Model Performance Metrics (Test Set)', pad=20, size=18, weight='bold')  
+
+    plt.xticks(np.arange(len(metrics)), metrics, fontsize=14)  # Set x-ticks to be the metrics
+    plt.yticks(fontsize=14)  # Set y-ticks font size
+    plt.ylabel('Value', labelpad=15, fontsize=14)  # Change to ylabel for vertical bars
+    plt.ylim(0, 1)  # Y-axis limit (0 to 1, for metric values)
+    plt.title('Model Performance Metrics (Test Set)', pad=20, size=18, weight='bold')  # Title of the plot
+
+    # Add text labels on the bars
     for bars in [bars1, bars2, accuracy_bar]:
         for bar in bars:
-            width = bar.get_width()
-            plt.text(width, bar.get_y() + bar.get_height()/2,
-                     f'{100*width:.2f}%',
-                     ha='left', va='center', fontsize=14)
-    plt.legend(loc='lower right', fontsize=14)  
-    plt.grid(True, axis='x', linestyle='--', alpha=0.7)   
-    plt.tight_layout()  
-    plt.savefig('metrics_plot.png', dpi=300, bbox_inches='tight')
-    plt.close()
+            height = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2, height,
+                     f'{100*height:.2f}%', ha='center', va='bottom', fontsize=14)
+
+    plt.legend(loc='upper left', fontsize=14)  # Adjust legend location
+    plt.grid(True, axis='y', linestyle='--', alpha=0.7)  # Grid lines along the y-axis
+    
+    plt.tight_layout()  # Adjust layout to avoid clipping
+    plt.savefig('metrics_plot.png', dpi=300, bbox_inches='tight')  # Save plot as PNG
+    plt.close()  # Close the plot
 
 
 def plot_pretty_confusion_matrix(metrics_file='model_metrics.csv'):
