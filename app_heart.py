@@ -222,6 +222,16 @@ def show_eda_for_heart_disease():
     )
 import streamlit as st
 
+import streamlit as st
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
+
+import streamlit as st
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
+
 def show_logistic_regression_description():
     """Display Logistic Regression Model Description for Heart Disease Prediction"""
 
@@ -247,64 +257,69 @@ def show_logistic_regression_description():
     st.subheader("🔑 Sigmoid Function")
     st.write("""
     The **sigmoid function** is crucial in logistic regression as it transforms the output of the linear equation 
-    into a probability. It is defined as:
+    into a probability. 
 
-    $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+    The sigmoid function is mathematically defined as:
 
-    The sigmoid function outputs values between 0 and 1, which makes it ideal for predicting probabilities.
-    
-    It maps any input value to a range between 0 and 1, which is interpreted as the probability of an event happening 
-    (e.g., whether a person has heart disease or not).
-    
-    Here's a diagram of the sigmoid function:
+    $$\sigma(z) = \\frac{1}{1 + e^{-z}}$$
+
+    - It ensures that the output is between **0 and 1**, making it suitable for probability estimation.
+    **.
     """)
 
-    # Show Sigmoid Function Diagram
-    st.image('sigmoid_function.png', caption="Sigmoid Function", use_column_width=True)
+    # Generate and show Sigmoid Function Diagram
+    x = np.linspace(-10, 10, 100)
+    y = 1 / (1 + np.exp(-x))
+    fig, ax = plt.subplots(figsize=(5, 4))
+    ax.plot(x, y)
+    ax.set_title("Sigmoid Function")
+    ax.set_xlabel("z")
+    ax.set_ylabel("σ(z)")
+    plt.savefig("sigmoid_function_resized.png", dpi=100, bbox_inches='tight')
+    st.image("sigmoid_function_resized.png", caption="Sigmoid Function")
 
     # Binary Cross-Entropy (BCE) Loss Explanation
     st.subheader("⚖️ Binary Cross-Entropy Loss (BCE Loss)")
     st.write("""
     **Binary Cross-Entropy Loss (BCE Loss)** is used as the cost function in logistic regression for binary classification.
-    It measures how well the model's predicted probabilities match the true labels. The BCE loss is calculated as:
-    
-    $$L(y, \hat{y}) = - \left[ y \log(\hat{y}) + (1 - y) \log(1 - \hat{y}) \right]$$
-    
+    It measures how well the model's predicted probabilities match the true labels. 
+
+    The **BCE loss formula** is:
+
+    $$L(y, \hat{y}) = - \\left[ y \\log(\\hat{y}) + (1 - y) \\log(1 - \\hat{y}) \\right]$$
+
     Where:
-    - $y$ is the true label (1 if heart disease is present, 0 if not).
-    - $\hat{y}$ is the predicted probability (from the sigmoid function).
-    
-    The goal is to minimize this loss during model training to improve the model's accuracy.
-
-    Here’s a diagram to better visualize BCE Loss:
+    - **$y$** is the actual class label (0 or 1).
+    - **$\hat{y}$** is the predicted probability from the logistic regression model.
+    - The loss is minimized when the predicted probability is close to the actual class label.
     """)
+    # Load and resize BCE loss diagram
+    image = Image.open("bce_loss.png").resize((300, 200))
+    st.image(image, caption="Binary Cross-Entropy Loss")
 
-    # Show BCE Loss Diagram
-    st.image('bce_loss.png', caption="Binary Cross-Entropy Loss", use_column_width=True)
 
-    # Gradient Descent Explanation
+        # Gradient Descent Explanation
     st.subheader("🔄 Gradient Descent")
     st.write("""
     **Gradient Descent** is an optimization algorithm used to minimize the loss function by iteratively adjusting the model's 
     parameters (weights and bias). It updates the model's parameters in the direction of the steepest decrease in the 
     loss function, as computed by the gradient.
 
-    In logistic regression, gradient descent is used to minimize the binary cross-entropy loss. The algorithm works by 
-    updating the parameters in the following manner:
+    The weight update formula in gradient descent is:
 
-    $$w = w - \eta \frac{\partial L}{\partial w}$$
-    $$b = b - \eta \frac{\partial L}{\partial b}$$
+    $$ w^{(t+1)} = w^{(t)} - \\alpha \\frac{\partial L}{\partial w} $$
 
     Where:
-    - $w$ and $b$ are the weights and bias, respectively.
-    - $\eta$ is the learning rate, which controls the step size of the updates.
-    - $\frac{\partial L}{\partial w}$ and $\frac{\partial L}{\partial b}$ are the gradients of the loss with respect to the weights and bias.
-
-    Gradient descent helps the model learn the optimal parameters to minimize the loss and improve prediction accuracy.
+    - **$w^{(t+1)}$** is the updated weight after each iteration.
+    - **$w^{(t)}$** is the current weight value.
+    - **$\\alpha$** is the learning rate, which controls how big the step is.
+    - **$\\frac{\partial L}{\partial w}$** is the gradient of the loss function with respect to the weight.
+    - The process continues until the loss converges to a minimum.
     """)
 
-    # Show Gradient Descent Diagram
-    st.image('gradient_descent.png', caption="Gradient Descent", use_column_width=True)
+    # Load and resize gradient descent diagram
+    image = Image.open("gradient_descent.png").resize((400, 200))
+    st.image(image, caption="Gradient Descent")
 
     # Why Logistic Regression for Heart Disease Prediction?
     st.subheader("💡 Why Logistic Regression for Heart Disease Prediction?")
@@ -321,8 +336,3 @@ def show_logistic_regression_description():
     These characteristics make logistic regression a reliable model for predicting heart disease.
     """)
 
-
-
-
-
-   
