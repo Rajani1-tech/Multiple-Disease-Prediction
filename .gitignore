@@ -1,3 +1,5 @@
 processed_data/
 saved_models/
 requirements.txt
+__pycache__
+venv
