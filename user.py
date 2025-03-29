@@ -5,6 +5,7 @@ import hashlib
 from database import create_users_table 
 import json
 
+
 # Database connection function
 def create_connection():
     return sqlite3.connect('new_user.db')
@@ -179,30 +180,6 @@ def sign_up():
             else:
                 st.error('Error creating account. Try again.')
 
-# # Login function
-# def login():
-#     """Login Form"""
-#     with st.form(key='login'):
-#         st.subheader(':green[Login]')
-#         email = st.text_input(':blue[Email]', placeholder='Enter Your Email')
-#         password = st.text_input(':blue[Password]', placeholder='Enter Your Password', type='password')
-
-#         if st.form_submit_button('Login'):
-#             if not email or not password:
-#                 st.warning('Both fields are required')
-#                 return
-
-#             user = get_user(email)
-#             if user:
-#                 stored_password = user[2]  # Password is in the third column
-#                 if hash_password(password) == stored_password:  # Compare hashed passwords
-#                     st.success('Login successful!')
-#                     st.session_state.logged_in = True
-#                     st.rerun()  # Refresh the page to update the UI
-#                 else:
-#                     st.error('Incorrect password')
-#             else:
-#                 st.error('User not found')
 def login():
     with st.form(key='login'):
         st.subheader(':green[Login]')
@@ -224,25 +201,54 @@ def login():
                 st.error('User not found')
 import datetime
 
-def check_recent_disease_predictions(email, disease_type):
-    """
-    Check if the user has predicted a particular disease (heart or diabetes) 
-    with the diagnosis result (1) 3 or more times in the last 30 days.
-    """
-    # Get the current date and calculate 30 days ago
-    current_date = datetime.datetime.now()
-    thirty_days_ago = current_date - datetime.timedelta(days=30)
+import sqlite3
+from datetime import datetime, timedelta
 
-    # Query the database to get predictions for this user within the last 30 days
-    predictions = get_user_predictions(email)
+def check_recent_predictions(email, disease_type):
+    conn = sqlite3.connect('new_user.db')
+    cursor = conn.cursor()
+    
+    # Get the current date and the date 30 days ago
+    current_date = datetime.now()
+    thirty_days_ago = current_date - timedelta(days=30)
+    
+    # Define positive prediction messages
+    positive_results = {
+        "Heart Disease": "The person has heart disease",
+        "Diabetes": 1
+    }
 
-    # Filter the predictions for the desired disease (heart or diabetes) within the last 30 days
-    # and check if the prediction result is 1 (i.e., the disease is present)
-    recent_predictions = [pred for pred in predictions if pred[0] == disease_type and 
-                          pred[2] == 1 and  # Prediction result indicating presence of the disease
-                          datetime.datetime.strptime(pred[3], '%Y-%m-%d %H:%M:%S') > thirty_days_ago]
+    # Query to get all the positive predictions for the specific disease within the last 30 days
+    cursor.execute("""
+        SELECT * FROM user_predictions
+        WHERE email = ? AND disease = ? AND prediction_result = ? AND timestamp >= ?
+    """, (email, disease_type, positive_results[disease_type], thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
+    
+    predictions = cursor.fetchall()
+    conn.close()
 
-    # If there are 3 or more predictions in the last 30 days, return True
-    return len(recent_predictions) >= 3
+    # Return True if there are 3 or more positive predictions in the last 30 days
+    return len(predictions) >= 3
+
+
+# def check_recent_predictions(email, disease_type):
+#     conn = sqlite3.connect('new_user.db')
+#     cursor = conn.cursor()
+    
+#     # Get the current date and the date 30 days ago
+#     current_date = datetime.now()
+#     thirty_days_ago = current_date - timedelta(days=30)
+    
+#     # Query to get all the positive predictions for the specific disease within the last 30 days
+#     cursor.execute("""
+#         SELECT * FROM user_predictions
+#         WHERE email = ? AND disease = ? AND prediction_result = 1 AND timestamp >= ?
+#     """, (email, disease_type, thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
+    
+#     predictions = cursor.fetchall()
+#     conn.close()
+
+#     # Return True if there are 3 or more positive predictions in the last 30 days
+#     return len(predictions) >= 3
 
 
