@@ -1,5 +1,5 @@
 import streamlit as st
-from user import login, sign_up, check_recent_disease_predictions
+from user import login, sign_up
 from streamlit_option_menu import option_menu
 from app_diabetes import app_diabetes
 from app_heart import app_heartdisease, model, show_heart_model_test_result, show_eda_for_heart_disease, show_logistic_regression_description
