@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 import pickle
 import json
+from user import check_recent_predictions
 
 # Function to save predictions in the database
 def save_user_prediction(email, disease, input_data, result):
@@ -14,15 +15,16 @@ def save_user_prediction(email, disease, input_data, result):
 
 # Validation function
 def validation(user_input):
-    if not (0 <= user_input[0] <= 20): return False
-    if not (0 <= user_input[1] <= 200): return False
-    if not (0 <= user_input[2] <= 140): return False
-    if not (0 <= user_input[3] <= 100): return False
-    if not (0 <= user_input[4] <= 800): return False
-    if not (0.00 <= user_input[5] <= 70.00): return False
-    if not (0.000 <= user_input[6] <= 3.000): return False
-    if not (0 <= user_input[7] <= 100): return False
-    return True
+    return all([
+        0 <= user_input[0] <= 20,
+        0 <= user_input[1] <= 200,
+        0 <= user_input[2] <= 140,
+        0 <= user_input[3] <= 100,
+        0 <= user_input[4] <= 800,
+        0.00 <= user_input[5] <= 70.00,
+        0.000 <= user_input[6] <= 3.000,
+        0 <= user_input[7] <= 100
+    ])
 
 # Diabetes Prediction App
 def app_diabetes():
@@ -52,8 +54,6 @@ def app_diabetes():
     with col2:
         Age = st.number_input('Age', value=25)
 
-    diab_diagnosis = ""
-
     # Load trained diabetes model
     diabetes_model = pickle.load(open('saved_models/diabetes_model_decision_tree.sav', 'rb'))
 
@@ -65,8 +65,6 @@ def app_diabetes():
     if not st.session_state.input_valid:
         st.error('Please ensure all values are within their valid ranges before proceeding')
 
-    show_performance = False
-
     if st.button('Diabetes Test Result', disabled=not st.session_state.input_valid):
         user_input = [float(x) for x in user_input]
         diab_prediction = diabetes_model.predict([user_input])
@@ -77,10 +75,12 @@ def app_diabetes():
             else 'The person **is not diabetic** using Decision Tree Model.'
         )
         st.success(diab_diagnosis)
-        show_performance = True
+          # Save prediction result in the database
+        save_user_prediction(email, "Diabetes", user_input, int(diab_prediction[0]))
+         # Check if user has predicted Diabetes 3 times within the last 30 days
+    if check_recent_predictions(email, 'Diabetes'):
+        st.warning("⚠️ **Alert:** You have predicted **Diabetes** 3 or more times in the last 30 days with a positive result. Please consult a doctor.")
 
-        # Save prediction result in the database
-        save_user_prediction(email, "Diabetes", user_input, diab_diagnosis)
 
     # if show_performance:
     #     st.subheader("Model Performance on Test Data")
