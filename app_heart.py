@@ -4,11 +4,13 @@ import pandas as pd
 import sqlite3
 import json
 import matplotlib.pyplot as plt
+from PIL import Image
 import seaborn as sns
 from utils.data_preprocessing import DataPreprocessor
 from models.logistic_regression import LogisticRegression
 from utils.model_evaluation import ModelEvaluator
 from datetime import datetime, timedelta
+from user import check_recent_predictions
 
 # Load and preprocess data
 preprocessor = DataPreprocessor("dataset/heart.csv")
@@ -30,25 +32,25 @@ def save_user_prediction(email, disease, input_data, result):
     conn.commit()
     conn.close()
 
-def check_recent_predictions(email, disease_type):
-    conn = sqlite3.connect('new_user.db')
-    cursor = conn.cursor()
+# def check_recent_predictions(email, disease_type):
+#     conn = sqlite3.connect('new_user.db')
+#     cursor = conn.cursor()
     
-    # Get the current date and the date 30 days ago
-    current_date = datetime.now()
-    thirty_days_ago = current_date - timedelta(days=30)
+#     # Get the current date and the date 30 days ago
+#     current_date = datetime.now()
+#     thirty_days_ago = current_date - timedelta(days=30)
     
-    # Query to get all the predictions for the specific disease and user within the last 30 days
-    cursor.execute("""
-        SELECT * FROM user_predictions
-        WHERE email = ? AND disease = ? AND prediction_result = ? AND timestamp >= ?
-    """, (email, disease_type, 'The person has heart disease', thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
+#     # Query to get all the predictions for the specific disease and user within the last 30 days
+#     cursor.execute("""
+#         SELECT * FROM user_predictions
+#         WHERE email = ? AND disease = ? AND prediction_result = ? AND timestamp >= ?
+#     """, (email, disease_type, 'The person has heart disease', thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
     
-    predictions = cursor.fetchall()
-    conn.close()
+#     predictions = cursor.fetchall()
+#     conn.close()
 
-    # Return True if there are 3 or more positive predictions in the last 30 days
-    return len(predictions) >= 3    
+    # # Return True if there are 3 or more positive predictions in the last 30 days
+    # return len(predictions) >= 3    
 
 def app_heartdisease(model):
     st.title('Heart Disease Prediction using ML')
@@ -111,14 +113,6 @@ def app_heartdisease(model):
         
         # Save data to database
         save_user_prediction(email, "Heart Disease", user_input, heart_diagnosis)
-    
-    # if show_performance:
-    #     st.subheader("Model Performance on Test Data")
-    #     col1, col2 = st.columns([7, 3.27])
-    #     with col1:
-    #         st.image('heart_disease_metrics_vertical.png')
-    #     with col2:
-    #         st.image('heart_disease_confusion_matrix.png')
 
 
 def show_heart_model_test_result():
@@ -220,17 +214,8 @@ def show_eda_for_heart_disease():
         "It helps us identify which features are strongly correlated with heart disease diagnosis and with each other. "
         "For example, a high correlation between cholesterol levels and heart disease may suggest that this feature is an important predictor."
     )
-import streamlit as st
 
-import streamlit as st
-from PIL import Image
-import matplotlib.pyplot as plt
-import numpy as np
 
-import streamlit as st
-from PIL import Image
-import matplotlib.pyplot as plt
-import numpy as np
 
 def show_logistic_regression_description():
     """Display Logistic Regression Model Description for Heart Disease Prediction"""
