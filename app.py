@@ -1,7 +1,7 @@
 import streamlit as st
 from user import login, sign_up, check_recent_disease_predictions
 from streamlit_option_menu import option_menu
-from app_diabetes import app_diabetes
+from app_diabetes import app_diabetes , show_diabetes_model_test_result, show_eda_for_diabetes, show_decision_tree_description
 from app_heart import app_heartdisease, model, show_heart_model_test_result, show_eda_for_heart_disease, show_logistic_regression_description
 from user import get_user_predictions  # Import database function
 
@@ -27,7 +27,7 @@ def load_health_assistant():
             'Heart Model Test Result',
             'Diabetes Model Test Result',
             'EDA for Heart Disease',
-            'EDA for Diabetes Disease',
+            'EDA for Diabetes',
             'Model Description'
         ],
         menu_icon='hospital-fill',
@@ -54,10 +54,15 @@ def load_health_assistant():
             st.info("No past predictions found.")
     elif selected == 'Heart Model Test Result':
         show_heart_model_test_result()
+    elif selected == 'Diabetes Model Test Result':
+        show_diabetes_model_test_result()
     elif selected ==   'EDA for Heart Disease':
         show_eda_for_heart_disease()
+    elif selected ==   'EDA for Diabetes':
+        show_eda_for_diabetes()
     elif selected ==   'Model Description':
         show_logistic_regression_description()
+        show_decision_tree_description()
 
 
 def main():
