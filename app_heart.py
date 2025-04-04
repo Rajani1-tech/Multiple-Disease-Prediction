@@ -32,25 +32,7 @@ def save_user_prediction(email, disease, input_data, result):
     conn.commit()
     conn.close()
 
-# def check_recent_predictions(email, disease_type):
-#     conn = sqlite3.connect('new_user.db')
-#     cursor = conn.cursor()
-    
-#     # Get the current date and the date 30 days ago
-#     current_date = datetime.now()
-#     thirty_days_ago = current_date - timedelta(days=30)
-    
-#     # Query to get all the predictions for the specific disease and user within the last 30 days
-#     cursor.execute("""
-#         SELECT * FROM user_predictions
-#         WHERE email = ? AND disease = ? AND prediction_result = ? AND timestamp >= ?
-#     """, (email, disease_type, 'The person has heart disease', thirty_days_ago.strftime('%Y-%m-%d %H:%M:%S')))
-    
-#     predictions = cursor.fetchall()
-#     conn.close()
 
-    # # Return True if there are 3 or more positive predictions in the last 30 days
-    # return len(predictions) >= 3    
 
 def app_heartdisease(model):
     st.title('Heart Disease Prediction using ML')
@@ -182,7 +164,7 @@ def show_eda_for_heart_disease():
 
     # Display Heart Disease Pie Chart (for diagnosis distribution)
     st.subheader("🫀 Distribution of Heart Disease Diagnoses (Pie Chart)")
-    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Heart_Disease_Pie.png', caption="Distribution of Heart Disease Diagnosis (1: Disease Present, 0: Disease Absent)")
+    st.image('/home/predator/Desktop/college_project/Multiple-Disease-Prediction/EDA/Heart_Disease_Pie.png', caption="Distribution of Heart Disease Diagnosis (1: Disease Present, 0: Disease Absent)", width=600)
     st.write(
         "This pie chart illustrates the proportion of individuals diagnosed with heart disease "
         "versus those without it. A higher percentage of one category over the other may indicate "
